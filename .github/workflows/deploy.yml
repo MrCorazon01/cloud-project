@@ -20,6 +20,7 @@ jobs:
       - name: Save Docker Image as Artifact
         run: |
           docker save my-app:${{ github.sha }} -o my-app.tar
+      - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v3
         with:
           name: docker-image
