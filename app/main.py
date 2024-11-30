@@ -13,8 +13,6 @@ async def startup():
 app.include_router(health.router)
 app.include_router(items.router)
 
-# Root endpoint
-# Root endpoint
 @app.get("/")
-async def root():
-    return {"message": "Welcome to my Python Lab API!"}
+def read_root():
+    return {"message": "Welcome to my Python Kubernetes Lab API!"}
