@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
- 
+
 jobs:
   build:
     name: Build Container Image
@@ -20,6 +20,7 @@ jobs:
       - name: Save Docker Image as Artifact
         run: |
           docker save my-app:${{ github.sha }} -o my-app.tar
+
       - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -71,6 +72,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install Elastic Beanstalk CLI
+        run: |
+          curl -sL https://github.com/aws/aws-elastic-beanstalk-cli-setup/raw/master/scripts/install_dependencies | sudo bash
 
       - name: Deploy to Elastic Beanstalk
         run: |
