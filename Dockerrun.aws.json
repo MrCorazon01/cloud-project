@@ -1,0 +1,13 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+      "Name": "kholle01/my-app:latest",
+      "Update": "true"
+    },
+    "Ports": [
+      {
+        "ContainerPort": "80"
+      }
+    ]
+  }
+  

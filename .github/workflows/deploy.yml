@@ -52,26 +52,21 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }}
 
   deploy:
-    name: Deploy to Cloud Run
+    name: Deploy to AWS Elastic Beanstalk
     needs: push
     runs-on: ubuntu-latest
     steps:
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          credentials_json: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: ${{ secrets.GCLOUD_PROJECT_ID }}
-          install_components: 'beta'
-
-      - name: Deploy to Cloud Run
+      - name: Deploy to Elastic Beanstalk
         run: |
-          gcloud run deploy my-app \
-            --image ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }} \
-            --region ${{ secrets.GCLOUD_REGION }} \
-            --platform managed \
-            --allow-unauthenticated \
-            --set-env-vars "DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_HOST=${{ secrets.DB_HOST }},DB_NAME=${{ secrets.DB_NAME }},DB_PORT=5432"
+          zip -r app.zip Dockerrun.aws.json
+          aws elasticbeanstalk create-application-version --application-name my-app \
+            --version-label ${{ github.sha }} --source-bundle S3Bucket=my-s3-bucket,S3Key=app.zip
+          aws elasticbeanstalk update-environment --environment-name my-env \
+            --version-label ${{ github.sha }}
