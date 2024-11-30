@@ -1,6 +1,6 @@
 # Python Cloud Lab API (GCP)
 
-Ce projet est une API simple construite avec FastAPI, conçue pour être déployée et testée facilement. Elle inclut des endpoints de santé (readiness et liveness) ainsi qu'une route racine.
+Ce projet est une API simple construite avec FastAPI, conçue pour être déployée et testée facilement sur Google Cloud Run. Elle inclut des endpoints de santé (readiness et liveness) ainsi qu'une route racine.
 
 ---
 
@@ -47,9 +47,12 @@ L'API sera disponible à l'adresse suivante : [http://127.0.0.1:8080](http://127
 - **Exemple de réponse** :
   ```json
   {
-    "message": "Welcome to my Python Kubernetes Lab API!"
+    "message": "Welcome to my Python Lab API!"
   }
   ```
+
+### URL sur Cloud Run :  
+[https://consolidated-test-serv-881946346796.us-central1.run.app/](https://consolidated-test-serv-881946346796.us-central1.run.app/)
 
 ---
 
@@ -65,6 +68,9 @@ L'API sera disponible à l'adresse suivante : [http://127.0.0.1:8080](http://127
   }
   ```
 
+### URL sur Cloud Run :  
+[https://consolidated-test-serv-881946346796.us-central1.run.app/health/ready](https://consolidated-test-serv-881946346796.us-central1.run.app/health/ready)
+
 ---
 
 ### **3. Liveness Endpoint**
@@ -78,3 +84,25 @@ L'API sera disponible à l'adresse suivante : [http://127.0.0.1:8080](http://127
     "status": "alive"
   }
   ```
+
+### URL sur Cloud Run :  
+[https://consolidated-test-serv-881946346796.us-central1.run.app/health/live](https://consolidated-test-serv-881946346796.us-central1.run.app/health/live)
+
+---
+
+## **Tester avec cURL**
+
+### Test de la route racine :
+```bash
+curl -X GET https://consolidated-test-serv-881946346796.us-central1.run.app/
+```
+
+### Test de readiness :
+```bash
+curl -X GET https://consolidated-test-serv-881946346796.us-central1.run.app/health/ready
+```
+
+### Test de liveness :
+```bash
+curl -X GET https://consolidated-test-serv-881946346796.us-central1.run.app/health/live
+```
