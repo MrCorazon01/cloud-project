@@ -79,6 +79,12 @@ jobs:
           sudo apt-get install -y python3-pip
           pip3 install --upgrade awsebcli
 
+      - name: Check if environment exists and terminate it if necessary
+        run: |
+          if eb list --region ${{ secrets.AWS_REGION }} | grep -q "my-app-environment"; then
+            echo "Environment exists, terminating it."
+            eb terminate my-app-environment --region ${{ secrets.AWS_REGION }} --force
+          fi
 
       - name: Deploy to Elastic Beanstalk
         run: |
