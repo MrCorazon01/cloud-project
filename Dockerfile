@@ -17,4 +17,5 @@ COPY app /app
 EXPOSE 8080
 
 # Start the app using Uvicorn on the correct port (8080)
-CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app.server.main:app", "--host", "0.0.0.0", "--port", "8080"]
+
