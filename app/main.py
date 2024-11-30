@@ -8,4 +8,4 @@ app.include_router(health.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to my Python Kubernetes Lab API!"}
+    return {"message": "Welcome to my Python Lab API!"}
