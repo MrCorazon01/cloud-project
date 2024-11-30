@@ -1,17 +1,10 @@
 from fastapi import FastAPI
-from app.routers import health, items
-from app.database import init_db
+from app.routers import health
 
 app = FastAPI()
 
-# Initialize the database when the app starts
-@app.on_event("startup")
-async def startup():
-    await init_db()
-
 # Include routers
 app.include_router(health.router)
-app.include_router(items.router)
 
 @app.get("/")
 def read_root():
