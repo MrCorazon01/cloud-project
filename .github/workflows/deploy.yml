@@ -62,7 +62,7 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:${{ github.sha }}
 
   deploy:
-    name: Deploy to Elastic Beanstalk
+    name: Deploy to Amazon ECS
     needs: push
     runs-on: ubuntu-latest
     steps:
@@ -73,22 +73,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install Elastic Beanstalk CLI
+      - name: Create ECR repository (if it doesn't exist)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install --upgrade awsebcli
+          aws ecr describe-repositories --repository-names my-app --region ${{ secrets.AWS_REGION }} || aws ecr create-repository --repository-name my-app --region ${{ secrets.AWS_REGION }}
 
-      - name: Check if environment exists and terminate it if necessary
+      - name: Push Docker Image to ECR
         run: |
-          if eb list --region ${{ secrets.AWS_REGION }} | grep -q "my-app-environment"; then
-            echo "Environment exists, terminating it."
-            eb terminate my-app-environment --region ${{ secrets.AWS_REGION }} --force
-          fi
+          docker tag my-app:${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:${{ github.sha }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:${{ github.sha }}
 
-      - name: Deploy to Elastic Beanstalk
+      - name: Deploy to ECS
         run: |
-          eb init -p docker my-app --region ${{ secrets.AWS_REGION }}
-          eb create my-app-environment --region ${{ secrets.AWS_REGION }} --single
-          eb setenv DB_USER=${{ secrets.DB_USER }} DB_PASSWORD=${{ secrets.DB_PASSWORD }} DB_HOST=${{ secrets.DB_HOST }} DB_NAME=${{ secrets.DB_NAME }} DB_PORT=5432
-          eb deploy
+          ecs_task_definition=$(aws ecs register-task-definition --family my-app-task --network-mode awsvpc --container-definitions '[{"name": "my-app", "image": "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:${{ github.sha }}", "memory": 512, "cpu": 256, "essential": true}]' --region ${{ secrets.AWS_REGION }} | jq -r .taskDefinition.taskDefinitionArn)
+          aws ecs update-service --cluster my-app-cluster --service my-app-service --task-definition $ecs_task_definition --region ${{ secrets.AWS_REGION }}
