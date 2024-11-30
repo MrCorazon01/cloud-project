@@ -17,6 +17,10 @@ jobs:
         run: |
           docker build -t my-app:${{ github.sha }} .
 
+      - name: List Docker Images (Debugging Step)
+        run: |
+          docker images
+
       - name: Save Docker Image as Artifact
         run: |
           docker save my-app:${{ github.sha }} -o my-app.tar
@@ -40,6 +44,10 @@ jobs:
       - name: Load Docker Image
         run: |
           docker load < my-app.tar
+
+      - name: List Docker Images (Post Load)
+        run: |
+          docker images
 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
