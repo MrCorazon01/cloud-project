@@ -70,7 +70,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy consolidated-test-serv \
-            --image ${{ secrets.DOCKER_USERNAME }}consolidated-test:${{ github.sha }} \
+            --image ${{ secrets.DOCKER_USERNAME }}/consolidated-test:${{ github.sha }} \
             --region ${{ secrets.GCLOUD_REGION }} \
             --platform managed \
             --allow-unauthenticated \
