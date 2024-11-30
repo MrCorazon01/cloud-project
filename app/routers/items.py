@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.server.database import get_db
+from app.database import get_db
 from asyncpg import Connection
 from pydantic import BaseModel
 from typing import List

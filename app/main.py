@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.server.routers import health, items
-from app.server.database import init_db
+from app.routers import health, items
+from app.database import init_db
 
 app = FastAPI()
 
